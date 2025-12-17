@@ -8,6 +8,34 @@ import pandas as pd
 import polars as pl
 import streamlit as st
 
+# MUST be first Streamlit call
+st.set_page_config(page_title="Recognition Logic", page_icon="💠", layout="wide")
+
+# =======================
+# LOGIN GATE (HARD BLOCK)
+# =======================
+def require_login():
+    if "authed" not in st.session_state:
+        st.session_state.authed = False
+
+    if st.session_state.authed:
+        return
+
+    st.markdown("## 🔐 Login Required")
+    pwd = st.text_input("Enter Password", type="password")
+
+    if st.button("Login"):
+        if pwd == st.secrets.get("APP_PASSWORD"):
+            st.session_state.authed = True
+            st.rerun()
+        else:
+            st.error("Invalid password")
+
+    st.stop()
+
+require_login()
+
+
 # =======================
 # Config
 # =======================
@@ -508,7 +536,6 @@ def process_excel_to_categories_only(file_bytes: bytes, curr_fy: str, curr_q: in
 # =======================
 # UI IMPLEMENTATION
 # =======================
-st.set_page_config(page_title="Recognition Logic", page_icon="💠", layout="wide")
 
 st.markdown(
     """
